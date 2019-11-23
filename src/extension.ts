@@ -22,14 +22,25 @@ const PROVIDED_LESSONS: Record<string, string> = {
   unit_type: "This type is an absolute UNIT"
 };
 
+// TODO: this is gross, find a way to not do it out here and don't do this
+// variable hotswapping doxicness
+let platterRustLsp: LanguageClient;
+let client = spawnRustLSP().then(client => {
+  let start = client.start();
+  platterRustLsp = client;
+  console.log("Start is: ", start);
+  console.log("lsp client is: ", client);
+  client.onReady().then(() => {
+    console.log("RUST LSP READY!");
+  });
+  return client;
+});
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Initializing learn extension...");
 
-  let lsp = await spawnRustLSP();
-  await lsp.onReady();
-  console.log("Rust lsp ready...");
   // block on parser initialization from WASM
   await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
 
@@ -62,32 +73,32 @@ export async function activate(context: vscode.ExtensionContext) {
       // register the hover action for Rust files
       vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
         provideHover(document, position, token) {
-          let { line: row, character: column } = position;
-
-          let b = new Promise(function(resolve, reject) {
-            lsp
+          return new Promise(function(resolve, reject) {
+            platterRustLsp
               .sendRequest(
                 HoverRequest.type,
-                lsp.code2ProtocolConverter.asTextDocumentPositionParams(
+                platterRustLsp.code2ProtocolConverter.asTextDocumentPositionParams(
                   document,
                   position.translate(0, -1)
                 ),
                 token
               )
               .then(
-                function(data) {
-                  return resolve(lsp.protocol2CodeConverter.asHover(data));
+                data => {
+                  return resolve(
+                    platterRustLsp.protocol2CodeConverter.asHover(data)
+                  );
                 },
-                function(error) {
+                error => {
                   return reject(error);
                 }
               );
           });
+        }
+      });
 
-          b.then((hoverstuffs) => {
-            console.log("the hoverstuffs were: ", hoverstuffs);
-          });
-
+      vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+        provideHover(document, { line: row, character: column }, token) {
           const tree = getTree(document);
 
           // TODO: check and refine this "parent" assumption
@@ -113,7 +124,6 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  spawnRustLSP();
   context.subscriptions.push(parseFile);
 }
 
