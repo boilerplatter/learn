@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as Parser from "web-tree-sitter";
-import { filter, flatten, flow, get, map, uniqBy } from 'lodash/fp'
+import { capitalize, filter, flatten, flow, get, map, replace, uniqBy } from 'lodash/fp'
 
 const getParent = get('parent.type')
 
@@ -38,7 +38,14 @@ export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
         uniqBy(getParent),
         map(node => this.snippets[getParent(node)]),
         filter(Boolean),
-        map(({ title }) => new Concept(title)) // TODO: expand Concept mapping a bit
+        map(({ title }) => {
+          const label = flow(
+            replace(/`/g)(''),
+            capitalize,
+          )(title)
+
+          return new Concept(label)
+        }) // TODO: expand Concept mapping a bit
       )(tree)
     }
 
