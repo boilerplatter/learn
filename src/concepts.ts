@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as Parser from "web-tree-sitter";
-import { capitalize, filter, flatten, flow, get, map, replace, uniqBy } from 'lodash/fp'
+import { capitalize, filter, flatten, flow, get, kebabCase, map, replace, uniqBy } from 'lodash/fp'
+
 
 const getParent = get('parent.type')
 
@@ -8,16 +9,39 @@ function flattenNodes(root: Parser.SyntaxNode): Parser.SyntaxNode[] {
   return flatten([root, ...root.children.map(flattenNodes)])
 }
 
+class Explore implements vscode.Command {
+  title: string
+  command: string 
+
+  constructor(title: string, command: string) {
+    this.title = title
+    this.command = command
+  }
+}
+
 // represents a single concept that appears in the "concepts" tree view
-// TODO: evaluate collapsible state vs markdown or web view (for example)
-class Concept extends vscode.TreeItem {}
+// TODO: open webview of blurb on click
+// TODO: add icons and state representing viewed vs un-viewed concepts
+class Concept extends vscode.TreeItem {
+  command: vscode.Command
+
+  constructor(label: string) {
+    const command = `concepts.explore.${kebabCase(label)}`
+
+    super(label)
+
+    vscode.commands.registerCommand(command, () => console.log(`exploring ${label}`))
+
+    this.command = new Explore(label, command)
+  }
+}
 
 // represents the collection of concepts a user needs to learn for a particular file
 export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
   parser: Parser
-  snippets?: any
+  snippets: Record<string, any>
 
-  constructor(parser: Parser, snippets?: any) {
+  constructor(parser: Parser, snippets: Record<string, any>) {
     this.parser = parser
     this.snippets = snippets
   }
