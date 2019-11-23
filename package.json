@@ -40,6 +40,7 @@
 		"vscode-test": "^1.2.2"
 	},
 	"dependencies": {
-		"web-tree-sitter": "^0.15.11"
+		"web-tree-sitter": "^0.15.11",
+		"vscode-languageclient": "^5.2.1"
 	}
 }
