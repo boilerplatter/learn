@@ -5,8 +5,10 @@
     "nodeQuery": "(use_declaration)",
     "tokenSpan": [0, 3],
     "explanation": {
-      "text": "By default, Rust brings only a few types into the scope of every program in the prelude. If a type you want to use isn’t in the prelude, you have to bring that type into scope explicitly with a use statement.",
-      "sourceUrl": "https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html#processing-a-guess"
+      "text":
+        "By default, Rust brings only a few types into the scope of every program in the prelude. If a type you want to use isn’t in the prelude, you have to bring that type into scope explicitly with a use statement.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html#processing-a-guess"
     }
   },
   {
@@ -15,8 +17,10 @@
     "nodeQuery": "(use_list)",
     "tokenSpan": [-2, 1],
     "explanation": {
-      "text": "If we’re using multiple items defined in the same package or same module, listing each item on its own line can take up a lot of vertical space in our files. Instead, we can use nested paths to bring the same items into scope in one line. We do this by specifying the common part of the path, followed by two colons, and then curly brackets around a list of the parts of the paths that differ.",
-      "sourceUrl": "https://doc.rust-lang.org/book/ch07-04-bringing-paths-into-scope-with-the-use-keyword.html#using-nested-paths-to-clean-up-large-use-lists"
+      "text":
+        "If we’re using multiple items defined in the same package or same module, listing each item on its own line can take up a lot of vertical space in our files. Instead, we can use nested paths to bring the same items into scope in one line. We do this by specifying the common part of the path, followed by two colons, and then curly brackets around a list of the parts of the paths that differ.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch07-04-bringing-paths-into-scope-with-the-use-keyword.html#using-nested-paths-to-clean-up-large-use-lists"
     }
   },
   {
@@ -25,7 +29,8 @@
     "nodeQuery": "(enum_item)",
     "tokenSpan": [0, 4],
     "explanation": {
-      "text": "Enums allow you to define a type by enumerating its possible values. An enum encodes meaning along with data, and pattern matching an enum in the `match` expression also makes it easy to run different code for different enum values.",
+      "text":
+        "Enums allow you to define a type by enumerating its possible values. An enum encodes meaning along with data, and pattern matching an enum in the `match` expression also makes it easy to run different code for different enum values.",
       "sourceUrl": "https://doc.rust-lang.org/book/ch06-00-enums.html"
     }
   },
@@ -35,8 +40,10 @@
     "nodeQuery": "(impl_item trait: (type_identifier))",
     "tokenSpan": [0, 4],
     "explanation": {
-      "text": "A trait tells the Rust compiler about functionality a particular type has and can share with other types. Implementing a trait on a type is similar to implementing regular methods. The difference is that after impl, we put the trait name that we want to implement, then use the for keyword, and then specify the name of the type we want to implement the trait for. Within the impl block, we put the method signatures that the trait definition has defined.",
-      "sourceUrl": "https://doc.rust-lang.org/book/ch10-02-traits.html#implementing-a-trait-on-a-type"
+      "text":
+        "A trait tells the Rust compiler about functionality a particular type has and can share with other types. Implementing a trait on a type is similar to implementing regular methods. The difference is that after impl, we put the trait name that we want to implement, then use the for keyword, and then specify the name of the type we want to implement the trait for. Within the impl block, we put the method signatures that the trait definition has defined.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch10-02-traits.html#implementing-a-trait-on-a-type"
     }
   },
   {
@@ -45,8 +52,45 @@
     "nodeQuery": "(reference_type)",
     "tokenSpan": [0, 1],
     "explanation": {
-      "text": "A reference type indicates a parameter that is borrowed: the function can't change the borrowed parameter (unless it is also declared mutable with `mut`). The function will not deallocate the resource when it goes out of scope. This allows for safe data sharing between functions/scopes without copying.",
-      "sourceUrl": "https://doc.rust-lang.org/1.30.0/book/first-edition/references-and-borrowing.html#borrowing"
+      "text":
+        "A reference type indicates a parameter or other scoped identifier that is borrowed: you can't change the borrowed item (unless it is also declared mutable with `mut`). The function will also not deallocate the resource when it goes out of scope. This allows for safe data sharing between functions/scopes without copying.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/1.30.0/book/first-edition/references-and-borrowing.html#borrowing"
+    }
+  },
+  {
+    "title": "Mutable reference (`&mut`)",
+    "nodeType": "mutable_specifier",
+    "nodeQuery": "(mutable_specifier)",
+    "tokenSpan": [0, 3],
+    "explanation": {
+      "text":
+        "A mutable reference allows read/write access to the referred item. You'll often need to use asterisks to access the contents of a mutable reference, e.g. `let y = &mut x; *y += 1;`.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/1.30.0/book/first-edition/references-and-borrowing.html#borrowing"
+    }
+  },
+  {
+    "title": "`match` operator",
+    "nodeType": "match_expression",
+    "nodeQuery": "(match_expression)",
+    "tokenSpan": [0, 5],
+    "explanation": {
+      "text":
+        "Rust has an extremely powerful control flow operator called `match` that allows you to compare a value against a series of patterns and then execute code based on which pattern matches. The power of match comes from the expressiveness of the patterns and the fact that the compiler confirms that all possible cases are handled.",
+      "sourceUrl": "https://doc.rust-lang.org/book/ch06-02-match.html"
+    }
+  },
+  {
+    "title": "Macro invocation (`!`)",
+    "nodeType": "token_tree",
+    "nodeQuery": "(macro_invocation (token_tree))",
+    "tokenSpan": [-1, 1],
+    "explanation": {
+      "text":
+        "Macros are specially written code that expands to produce more code; the `!` here indicates a macro is being called. `println!` and `vec!` are two very common macros in Rust.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch19-06-macros.html#function-like-macros"
     }
   }
 ]
