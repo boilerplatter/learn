@@ -1,6 +1,7 @@
 [
   {
     "title": "`use` statement",
+    "example": "`use std::fmt;`",
     "nodeType": "use_declaration",
     "nodeQuery": "(use_declaration)",
     "tokenSpan": [0, 3],
@@ -14,6 +15,7 @@
   },
   {
     "title": "nested `use` path list",
+    "example": "`use std::{ fmt, path };`",
     "nodeType": "use_list",
     "nodeQuery": "(use_list)",
     "tokenSpan": [-2, 1],
@@ -26,7 +28,8 @@
     }
   },
   {
-    "title": "Enumeration (`enum`)",
+    "title": "Enumeration",
+    "example": "`enum LoadingState { Loading, Failure, Success }`",
     "nodeType": "enum_item",
     "nodeQuery": "(enum_item)",
     "tokenSpan": [0, 4],
@@ -39,7 +42,8 @@
     }
   },
   {
-    "title": "Trait implementation (`impl` ... `for`)",
+    "title": "Trait implementation",
+    "example":  "`impl fmt::Display for MyType { ... }`)",
     "nodeType": "impl_item",
     "nodeQuery": "(impl_item trait: (type_identifier))",
     "tokenSpan": [0, 4],
@@ -52,7 +56,8 @@
     }
   },
   {
-    "title": "Reference type (`&`)",
+    "title": "Reference type",
+    "example": "`fn readOnly(data: &[u8]) { ... }`",
     "nodeType": "reference_type",
     "nodeQuery": "(reference_type)",
     "tokenSpan": [0, 1],
@@ -65,7 +70,8 @@
     }
   },
   {
-    "title": "Mutable reference (`&mut`)",
+    "title": "Mutable reference",
+    "example": "`fn canChange(data: &mut Vec<u8>) { ... }`",
     "nodeType": "mutable_specifier",
     "nodeQuery": "(mutable_specifier)",
     "tokenSpan": [0, 3],
@@ -91,7 +97,8 @@
     }
   },
   {
-    "title": "Macro invocation (`!`)",
+    "title": "Macro invocation",
+    "example": "`println!(\"Hello, {}\", name);`",
     "nodeType": "token_tree",
     "nodeQuery": "(macro_invocation (token_tree))",
     "tokenSpan": [-1, 1],
@@ -104,7 +111,8 @@
     }
   },
   {
-    "title": "Scoped identifier (`path::name`)",
+    "title": "Scoped identifier",
+    "example": "`std::thread::LocalKey`",
     "nodeType": "scoped_identifier",
     "nodeQuery": "(scoped_identifier)",
     "explanation": {
@@ -116,7 +124,8 @@
     }
   },
   {
-    "title": "Generic type (`<T1, T2>`)",
+    "title": "Generic type",
+    "example": "`fn largest<T>(list: &[T]) -> T { ... }`",
     "nodeType": "generic_type",
     "nodeQuery": "(generic_type)",
     "explanation": {
@@ -128,7 +137,8 @@
     }
   },
   {
-    "title": "Error propagation (`?`)",
+    "title": "Error propagation",
+    "example": "`let caller = get_first_argument()?;`",
     "nodeType": "try_expression",
     "nodeQuery": "(try_expression)",
     "explanation": {
@@ -140,7 +150,8 @@
     }
   },
   {
-    "title": "Scoped imports (e.g. `use some_module::some_enum::some_value`)",
+    "title": "Scoped imports",
+    "example": "`use some_module::some_enum::some_value;`",
     "nodeType": "scoped_use_list",
     "nodeQuery": "(scoped_use_list)",
     "explanation": {
@@ -153,6 +164,7 @@
   },
   {
     "title": "`self` as a parameter",
+    "example": "`fn fmt(&self, formatter: &mut Formatter) -> fmt::Result { ... }`",
     "nodeType": "self_parameter",
     "nodeQuery": "(self_parameter)",
     "explanation": {
