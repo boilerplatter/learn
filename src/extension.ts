@@ -6,6 +6,7 @@ import * as path from "path";
 import * as child_process from "child_process";
 import { getOr, keyBy } from "lodash/fp";
 import * as nodeTypeHovers from "./data/nodeTypeToConcept.json";
+import { existsSync } from "fs";
 import { buildBlurb } from "./helpers";
 import { ConceptProvider } from "./concepts";
 
@@ -22,7 +23,11 @@ const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
 const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 
 async function spawnRustLSP(workspace: any) {
-  const rlsPath = "~/.cargo/bin/rls";
+  let rlsPath = "~/.cargo/bin/rls";
+
+  if (!existsSync(rlsPath)) {
+    rlsPath = "rls";
+  }
 
   // TODO: validate that first array item exists (altho docs say it always will)
   const cwd = workspace.workspaceFolders[0].uri.fsPath;
