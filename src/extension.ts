@@ -83,8 +83,8 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-    provideHover(document, position, token) {
-      lspClient
+    async provideHover(document, position, token) {
+      const lspResponse = await lspClient
         .sendRequest(
           HoverRequest.type,
           lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
@@ -92,11 +92,11 @@ export async function activate(context: vscode.ExtensionContext) {
             position.translate(0, -1)
           ),
           token
-        )
-        .then(lspResponse => {
-          lspClient.protocol2CodeConverter.asHover(lspResponse);
-        });
-      return null;
+        );
+
+        lspClient.protocol2CodeConverter.asHover(lspResponse);
+
+        return null;
     }
   });
 
@@ -107,7 +107,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 async function spawnRustLSP(workspace: any) {
-  const rlsPath = "rls";
+  const rlsPath = "~/.cargo/bin/rls";
 
   // TODO: validate that first array item exists (altho docs say it always will)
   const cwd = workspace.workspaceFolders[0].uri.fsPath;
@@ -130,6 +130,7 @@ async function spawnRustLSP(workspace: any) {
         );
       }
     });
+
     return childProcess;
   };
 
