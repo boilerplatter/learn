@@ -22,13 +22,7 @@ const RUST_WASM_MODULE = "tree-sitter-rust";
 const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
 const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 
-async function spawnRustLSP(workspace: any) {
-  let rlsPath = `${process.env.HOME}/.cargo/bin/rls`;
-
-  if (!existsSync(rlsPath)) {
-    rlsPath = "rls";
-  }
-
+async function spawnRustLSP(workspace: any, rlsPath: string) {
   // TODO: validate that first array item exists (altho docs say it always will)
   const cwd = workspace.workspaceFolders[0].uri.fsPath;
   let env = {};
@@ -84,15 +78,19 @@ async function spawnRustLSP(workspace: any) {
   return client;
 }
 
+async function getRlsPath() {
+  let rlsPath = `${process.env.HOME}/.cargo/bin/rls`;
+
+  if (!(existsSync(rlsPath))) {
+    rlsPath = "rls";
+  }
+  return rlsPath;
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Initializing learn extension...");
-
-  let lspClient = await spawnRustLSP(vscode.workspace);
-  lspClient.start();
-  await lspClient.onReady();
-  console.log("Rust lsp server ready.");
 
   // block on parser initialization from WASM
   await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
@@ -144,22 +142,30 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-    async provideHover(document, position, token) {
-      const lspResponse = await lspClient.sendRequest(
-        HoverRequest.type,
-        lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
-          document,
-          position.translate(0, -1)
-        ),
-        token
-      );
+  let rlsPath: string = await getRlsPath();
+  if (rlsPath) {
+    let lspClient = await spawnRustLSP(vscode.workspace, rlsPath);
+    lspClient.start();
+    await lspClient.onReady();
+    console.log("Rust lsp server ready.");
 
-      lspClient.protocol2CodeConverter.asHover(lspResponse);
+    vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+      async provideHover(document, position, token) {
+        const lspResponse = await lspClient.sendRequest(
+          HoverRequest.type,
+          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
+            document,
+            position.translate(0, -1)
+          ),
+          token
+        );
 
-      return null;
-    }
-  });
+        lspClient.protocol2CodeConverter.asHover(lspResponse);
+
+        return null;
+      }
+    });
+  }
 
   // Build a tree (not a graph!) of concepts for learnin' within a single file
   vscode.window.registerTreeDataProvider(
