@@ -23,17 +23,19 @@ export async function activate(context: vscode.ExtensionContext) {
         // set Rust as standard tree-sitter language module
         parser.setLanguage(Rust);
 
-        // get the parsed syntax trees
-        const trees = vscode.window.visibleTextEditors.map(editor => parser.parse(editor.document.getText())); // TODO: investigate getText vs Parser.input()
-
-        // do something with the parsed syntax trees
-        console.log(trees);
-
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	let parseFile = vscode.commands.registerCommand('extension.parseFile', () => {
 		// The code you place here will be executed every time your command is executed
+
+                // get the parsed syntax trees
+                const trees = vscode.window.visibleTextEditors.map(
+                  editor => parser.parse(editor.document.getText())
+                ); // TODO: investigate getText vs Parser.input()
+
+                // do something with the parsed syntax trees
+                console.log('parse tree->', trees.map(tree => tree.rootNode.toString()));
 
 		// Display a message box to the user
 		vscode.window.showInformationMessage('A file parse happened!');
