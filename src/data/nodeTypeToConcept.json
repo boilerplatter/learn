@@ -99,7 +99,7 @@
     "nodeQuery": "(scoped_identifier)",
     "explanation": {
       "text":
-        "To show Rust where to find an item in a module tree, we use a path in the same way we use a path when navigating a filesystem. If we want to call a function, we need to know its path. Paths are composed of one or more nested modules separated by double colons (::), followed by an item's identifier.",
+        "To show Rust where to find an identifier, we use a path in the same way we use a path when navigating a filesystem. If we want to call a function or use a type, we need to know its path. Paths are composed of one or more nested modules and types separated by double colons (::), followed by an item's identifier.",
       "sourceUrl":
         "https://doc.rust-lang.org/book/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html#paths-for-referring-to-an-item-in-the-module-tree"
     }
