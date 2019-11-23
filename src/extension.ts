@@ -4,6 +4,8 @@ import * as vscode from "vscode";
 import * as Parser from "web-tree-sitter";
 import * as path from "path";
 import * as child_process from "child_process";
+import { getOr, keyBy } from "lodash/fp";
+import * as nodeTypeHovers from "./data/nodeTypeToConcept.json";
 
 import {
   LanguageClient,
@@ -14,12 +16,7 @@ import {
 
 const RUST_WASM_MODULE = "tree-sitter-rust";
 const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
-const PROVIDED_LESSONS: Record<string, string> = {
-  try_expression: "This is some crazy-ass Result-unwrapping magic",
-  type_arguments: "These angle-y bois aren't HTML, we promise (see: JSX.rs)",
-  generic_type: "This type isn't basic... it's just generic",
-  unit_type: "This type is an absolute UNIT"
-};
+const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -69,7 +66,9 @@ export async function activate(context: vscode.ExtensionContext) {
           if (parent) {
             let { nodeType } = parent.walk();
 
-            return new vscode.Hover(PROVIDED_LESSONS[nodeType] || "");
+            let blurb = getOr("")(`${nodeType}.explanation.text`)(PROVIDED_HOVERS as any);
+
+            return new vscode.Hover(blurb);
           }
 
           return null;
