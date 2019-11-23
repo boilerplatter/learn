@@ -1,8 +1,10 @@
-import { MarkdownString } from 'vscode'
+import { MarkdownString } from "vscode";
 
 export function buildBlurb(title = "", text = "", sourceUrls = []) {
   const header = title && `## 💡 ${title}\n`;
-  const sources = `\n\nMore info: ${sourceUrls.map(url => `[${url}](${url})`).join('\n')}`;
+  const sources = `\n\nMore info: ${sourceUrls
+    .map(url => `[${url}](${url})`)
+    .join("\n")}`;
   const entry = `${header}${text}${sources}`;
   const markdown = new MarkdownString(entry);
 
@@ -10,4 +12,3 @@ export function buildBlurb(title = "", text = "", sourceUrls = []) {
 
   return markdown;
 }
-

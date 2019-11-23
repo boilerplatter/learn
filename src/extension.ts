@@ -6,7 +6,7 @@ import * as path from "path";
 import * as child_process from "child_process";
 import { getOr, keyBy } from "lodash/fp";
 import * as nodeTypeHovers from "./data/nodeTypeToConcept.json";
-import { buildBlurb } from './helpers'
+import { buildBlurb } from "./helpers";
 import { ConceptProvider } from "./concepts";
 
 import {
@@ -114,20 +114,20 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // register the hover action for Rust files
   vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-      provideHover(document, { line: row, character: column }, token) {
-        const tree = getTree(document);
+    provideHover(document, { line: row, character: column }, token) {
+      const tree = getTree(document);
 
-        // TODO: check and refine this "parent" assumption
-        const { parent } = tree.rootNode.descendantForPosition({
-          row,
-          column
-        });
+      // TODO: check and refine this "parent" assumption
+      const { parent } = tree.rootNode.descendantForPosition({
+        row,
+        column
+      });
 
-        if (parent) {
-          const { nodeType } = parent.walk();
-          const {
-            title,
-            explanation: { text, sourceUrls } = {} as Record<string, any>
+      if (parent) {
+        const { nodeType } = parent.walk();
+        const {
+          title,
+          explanation: { text, sourceUrls } = {} as Record<string, any>
         } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
 
         const entry = buildBlurb(title, text, sourceUrls);
@@ -157,7 +157,10 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   // Build a tree (not a graph!) of concepts for learnin' within a single file
-  vscode.window.registerTreeDataProvider("concepts", new ConceptProvider(parser, PROVIDED_HOVERS));
+  vscode.window.registerTreeDataProvider(
+    "concepts",
+    new ConceptProvider(parser, PROVIDED_HOVERS)
+  );
 
   // Display a message box to the user
   vscode.window.showInformationMessage(
