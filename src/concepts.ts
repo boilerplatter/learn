@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as Parser from "web-tree-sitter";
+import * as Markdown from 'markdown-it';
 import {
   capitalize,
   filter,
@@ -14,9 +15,10 @@ import {
   sortBy,
   values,
 } from 'lodash/fp'
-
+import { buildBlurb } from './helpers'
 
 const getParent = get('parent.type')
+const markdown = new Markdown()
 
 function flattenNodes(root: Parser.SyntaxNode): Parser.SyntaxNode[] {
   return flatten([root, ...root.children.map(flattenNodes)])
@@ -33,17 +35,39 @@ class Explore implements vscode.Command {
 }
 
 // represents a single concept that appears in the "concepts" tree view
-// TODO: open webview of blurb on click
 // TODO: add icons and state representing viewed vs un-viewed concepts
+// TODO: refresh concepts and webview as the user types
 class Concept extends vscode.TreeItem {
   command: vscode.Command
 
-  constructor(label: string) {
-    const command = `concepts.explore.${kebabCase(label)}`
+  constructor(label: string, blurb: string) {
+    const internalLabel = kebabCase(label)
+    const command = `concepts.explore.${internalLabel}`
 
     super(label)
 
-    vscode.commands.registerCommand(command, () => console.log(`exploring ${label}`))
+    vscode.commands.registerCommand(command, () => {
+      const panel = vscode.window.createWebviewPanel(
+        internalLabel,
+        label,
+        vscode.ViewColumn.One,
+        {}
+      )
+
+      panel.webview.html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${label}</title>
+        </head>
+        <body>
+          ${blurb}
+        </body>
+      </html>
+      `
+    })
 
     this.command = new Explore(label, command)
   }
@@ -78,14 +102,16 @@ export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
         reverse,
         map(nodes => this.snippets[getParent(nodes[0])]),
         filter(Boolean),
-        map(({ title }) => {
+        map(({ title, explanation: { text, sourceUrls } = {} as Record<string, any>}) => {
           const label = flow(
             replace(/`/g)(''),
             capitalize,
           )(title)
 
-          return new Concept(label)
-        }) // TODO: expand Concept mapping a bit
+          const { value: rawBlurb } = buildBlurb(title, text, sourceUrls)
+          const blurb = markdown.render(rawBlurb)
+          return new Concept(label, blurb)
+        })
       )(tree)
     }
 

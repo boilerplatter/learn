@@ -6,6 +6,7 @@ import * as path from "path";
 import * as child_process from "child_process";
 import { getOr, keyBy } from "lodash/fp";
 import * as nodeTypeHovers from "./data/nodeTypeToConcept.json";
+import { buildBlurb } from './helpers'
 import { ConceptProvider } from "./concepts";
 
 import {
@@ -19,17 +20,6 @@ import {
 const RUST_WASM_MODULE = "tree-sitter-rust";
 const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
 const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
-
-function buildBlurb(title = "", text = "", sourceUrls = []) {
-  const header = title && `## 💡 ${title}\n`;
-  const sources = `\n\nMore info: ${sourceUrls.join('\n')}`;
-  const entry = `${header}${text}${sources}`;
-  const markdown = new vscode.MarkdownString(entry);
-
-  markdown.isTrusted = true;
-
-  return markdown;
-}
 
 async function spawnRustLSP(workspace: any) {
   const rlsPath = "~/.cargo/bin/rls";
@@ -137,7 +127,7 @@ export async function activate(context: vscode.ExtensionContext) {
           const { nodeType } = parent.walk();
           const {
             title,
-            explanation: { text, sourceUrls } = {} as Record<string, string | string[]>
+            explanation: { text, sourceUrls } = {} as Record<string, any>
         } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
 
         const entry = buildBlurb(title, text, sourceUrls);
