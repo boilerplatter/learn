@@ -58,33 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // register the hover action for Rust files
   vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-    provideHover(document, position, token) {
-      let { line: row, character: column } = position;
-
-      let nothing = new Promise(function(resolve, reject) {
-        lspClient
-        .sendRequest(
-          HoverRequest.type,
-          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
-            document,
-            position.translate(0, -1)
-          ),
-          token
-        )
-        .then(
-          (data: any) => {
-            return resolve(
-              lspClient.protocol2CodeConverter.asHover(data)
-            );
-          },
-          (error: any) => {
-            return reject(error);
-          }
-        );
-      });
-
-
-
+    provideHover(document, { line: row, character: column }, token) {
 
       const tree = getTree(document);
 
@@ -112,6 +86,35 @@ export async function activate(context: vscode.ExtensionContext) {
       return null;
     }
   });
+
+  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+    provideHover(document, position, token) {
+
+      let nothing = new Promise(function(resolve, reject) {
+        lspClient
+        .sendRequest(
+          HoverRequest.type,
+          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
+            document,
+            position.translate(0, -1)
+          ),
+          token
+        )
+        .then(
+          (data: any) => {
+            return resolve(
+              lspClient.protocol2CodeConverter.asHover(data)
+            );
+          },
+          (error: any) => {
+            return reject(error);
+          }
+        );
+      });
+      return null;
+    }
+  });
+
 
   // Display a message box to the user
   vscode.window.showInformationMessage(
