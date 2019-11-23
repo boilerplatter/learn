@@ -74,7 +74,8 @@ export async function activate(context: vscode.ExtensionContext) {
         const source =
           sourceUrl && `\n\nFurther reading: [${sourceUrl}](${sourceUrl})`;
         const entry = `${header}${text}${source}`;
-
+        const md = new vscode.MarkdownString(entry)
+        md.isTrusted = true;
         return new vscode.Hover(entry);
       }
 
