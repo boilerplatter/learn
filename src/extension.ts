@@ -70,10 +70,11 @@ export async function activate(context: vscode.ExtensionContext) {
   const parseFile = vscode.commands.registerCommand(
     "extension.parseFile",
     () => {
-      // register the hover action for Rust files
+
       vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
         provideHover(document, position, token) {
-          return new Promise(function(resolve, reject) {
+          let { line: row, character: column } = position;
+          let nothing = new Promise(function(resolve, reject) {
             platterRustLsp
               .sendRequest(
                 HoverRequest.type,
@@ -93,12 +94,9 @@ export async function activate(context: vscode.ExtensionContext) {
                   return reject(error);
                 }
               );
-          });
-        }
-      });
+          }); 
 
-      vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-        provideHover(document, { line: row, character: column }, token) {
+
           const tree = getTree(document);
 
           // TODO: check and refine this "parent" assumption
