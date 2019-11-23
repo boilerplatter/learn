@@ -26,12 +26,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   let lspClient = await spawnRustLSP(vscode.workspace);
   lspClient.start();
-
-  /*console.log("Start is: ", start);*/
-  console.log("lsp client is: ", lspClient);
   await lspClient.onReady();
-  console.log("RUST LSP READY!");
-
+  console.log("Rust lsp server ready.");
 
   // block on parser initialization from WASM
   await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
@@ -59,7 +55,6 @@ export async function activate(context: vscode.ExtensionContext) {
   // register the hover action for Rust files
   vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
     provideHover(document, { line: row, character: column }, token) {
-
       const tree = getTree(document);
 
       // TODO: check and refine this "parent" assumption
@@ -89,9 +84,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
     provideHover(document, position, token) {
-
-      let nothing = new Promise(function(resolve, reject) {
-        lspClient
+      lspClient
         .sendRequest(
           HoverRequest.type,
           lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
@@ -100,33 +93,23 @@ export async function activate(context: vscode.ExtensionContext) {
           ),
           token
         )
-        .then(
-          (data: any) => {
-            return resolve(
-              lspClient.protocol2CodeConverter.asHover(data)
-            );
-          },
-          (error: any) => {
-            return reject(error);
-          }
-        );
-      });
+        .then(lspResponse => {
+          lspClient.protocol2CodeConverter.asHover(lspResponse);
+        });
       return null;
     }
   });
-
 
   // Display a message box to the user
   vscode.window.showInformationMessage(
     "A hover provider was registered for Rust files"
   );
-
 }
 
 async function spawnRustLSP(workspace: any) {
   const rlsPath = "rls";
 
-  // TODO: validate that first array item exists
+  // TODO: validate that first array item exists (altho docs say it always will)
   const cwd = workspace.workspaceFolders[0].uri.fsPath;
   let env = {};
 
@@ -177,7 +160,6 @@ async function spawnRustLSP(workspace: any) {
     clientOptions
   );
 
-  console.log("Client is: ", client);
   return client;
 }
 
