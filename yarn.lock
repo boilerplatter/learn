@@ -720,6 +720,11 @@ vscode-test@^1.2.2:
     https-proxy-agent "^2.2.4"
     rimraf "^2.6.3"
 
+web-tree-sitter@^0.15.11:
+  version "0.15.11"
+  resolved "https://registry.yarnpkg.com/web-tree-sitter/-/web-tree-sitter-0.15.11.tgz#2fa29820f4b6273f936e23de9ab1a1a62be347c3"
+  integrity sha512-7Sr26MV8bPPvKU+4VMpOoLYwaAFBsCsxRGtxYPSxClWIaR2KIciqg6zUeG14W9QrdlpBt7VHHzhd1CBb0e6i8w==
+
 which-module@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
