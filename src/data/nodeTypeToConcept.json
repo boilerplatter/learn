@@ -92,5 +92,38 @@
       "sourceUrl":
         "https://doc.rust-lang.org/book/ch19-06-macros.html#function-like-macros"
     }
+  },
+  {
+    "title": "Scoped identifier (`path::name`)",
+    "nodeType": "scoped_identifier",
+    "nodeQuery": "(scoped_identifier)",
+    "explanation": {
+      "text":
+        "To show Rust where to find an item in a module tree, we use a path in the same way we use a path when navigating a filesystem. If we want to call a function, we need to know its path. Paths are composed of one or more nested modules separated by double colons (::), followed by an item's identifier.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html#paths-for-referring-to-an-item-in-the-module-tree"
+    }
+  },
+  {
+    "title": "Generic type (`<T1, T2>`)",
+    "nodeType": "generic_type",
+    "nodeQuery": "(generic_type)",
+    "explanation": {
+      "text":
+        "Generics are abstract stand-ins for concrete types or other properties. Some common examples are `Option<T>`, `Vec<T>`, and `struct Point<T> { x: T, y: T, }`. They allow you to write code that defines behavior and relationships that work for multiple concrete types, without repeating yourself.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch10-01-syntax.html#generic-data-types"
+    }
+  },
+  {
+    "title": "Error propagation (`?`)",
+    "nodeType": "try_expression",
+    "nodeQuery": "(try_expression)",
+    "explanation": {
+      "text":
+        "The `?` placed after a `Result` makes a common error handling pattern more concise: if the value of the `Result` is an `Ok`, the value inside the `Ok` will get returned from this expression, and the program will continue. If the value is an `Err`, the `Err` will be returned from the whole function as if we had used the return keyword",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator"
+    }
   }
 ]
