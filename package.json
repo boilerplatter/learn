@@ -10,16 +10,11 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.parseFile"
+		"onLanguage:rust"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "extension.parseFile",
-				"title": "Learn in this file"
-			}
-		]
+		"commands": []
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run compile",

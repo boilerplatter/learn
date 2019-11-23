@@ -46,51 +46,42 @@ export async function activate(context: vscode.ExtensionContext) {
     return parser.parse(document.getText());
   }
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  const parseFile = vscode.commands.registerCommand(
-    "extension.parseFile",
-    () => {
-      // register the hover action for Rust files
-      vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-        provideHover(document, { line: row, character: column }, token) {
-          const tree = getTree(document);
+  // register the hover action for Rust files
+  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+    provideHover(document, { line: row, character: column }, token) {
+      const tree = getTree(document);
 
-          // TODO: check and refine this "parent" assumption
-          const { parent } = tree.rootNode.descendantForPosition({
-            row,
-            column
-          });
-
-          if (parent) {
-            const { nodeType } = parent.walk();
-            const {
-              title = "",
-              explanation: { text = "", sourceUrl = "" } = {}
-            } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
-
-            const header = title && `### ${title}\n`;
-            const source =
-              sourceUrl && `\n\nFurther reading: [${sourceUrl}](${sourceUrl})`;
-            const entry = `${header}${text}${source}`;
-
-            return new vscode.Hover(entry);
-          }
-
-          return null;
-        }
+      // TODO: check and refine this "parent" assumption
+      const { parent } = tree.rootNode.descendantForPosition({
+        row,
+        column
       });
 
-      // Display a message box to the user
-      vscode.window.showInformationMessage(
-        "A hover provider was registered for Rust files"
-      );
+      if (parent) {
+        const { nodeType } = parent.walk();
+        const {
+          title = "",
+          explanation: { text = "", sourceUrl = "" } = {}
+        } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
+
+        const header = title && `### ${title}\n`;
+        const source =
+          sourceUrl && `\n\nFurther reading: [${sourceUrl}](${sourceUrl})`;
+        const entry = `${header}${text}${source}`;
+
+        return new vscode.Hover(entry);
+      }
+
+      return null;
     }
+  });
+
+  // Display a message box to the user
+  vscode.window.showInformationMessage(
+    "A hover provider was registered for Rust files"
   );
 
   spawnRustLSP();
-  context.subscriptions.push(parseFile);
 }
 
 async function spawnRustLSP() {
