@@ -39,6 +39,7 @@ class Explore implements vscode.Command {
 // TODO: refresh concepts and webview as the user types
 class Concept extends vscode.TreeItem {
   command: vscode.Command;
+  handle: vscode.Disposable;
 
   constructor(label: string, blurb: string) {
     const internalLabel = kebabCase(label);
@@ -46,7 +47,7 @@ class Concept extends vscode.TreeItem {
 
     super(label);
 
-    vscode.commands.registerCommand(command, () => {
+    this.handle = vscode.commands.registerCommand(command, () => {
       const panel = vscode.window.createWebviewPanel(
         internalLabel,
         label,
@@ -75,12 +76,21 @@ class Concept extends vscode.TreeItem {
 
 // represents the collection of concepts a user needs to learn for a particular file
 export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
+  children: Concept[];
   parser: Parser;
   snippets: Record<string, any>;
+
+  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
   constructor(parser: Parser, snippets: Record<string, any>) {
     this.parser = parser;
     this.snippets = snippets;
+    this.children = []
+
+    vscode.workspace.onDidChangeTextDocument(uri => {
+      this._onDidChangeTreeData.fire()
+    })
   }
 
   getTreeItem(element: Concept): vscode.TreeItem {
@@ -90,10 +100,12 @@ export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
   getChildren(element?: Concept) {
     const { activeTextEditor } = vscode.window;
 
+    this.children.forEach(child => child.handle.dispose())
+
     if (activeTextEditor) {
       const tree = this.parser.parse(activeTextEditor.document.getText());
 
-      return flow(
+      this.children = flow(
         get("rootNode"),
         flattenNodes,
         groupBy(getParent),
@@ -117,8 +129,10 @@ export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
           }
         )
       )(tree);
+    } else {
+      this.children = []
     }
 
-    return [];
+    return this.children;
   }
 }
