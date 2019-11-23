@@ -78,7 +78,7 @@ async function spawnRustLSP(workspace: any, rlsPath: string) {
   return client;
 }
 
-async function getRlsPath() {
+function getRlsPath() {
   let rlsPath = `${process.env.HOME}/.cargo/bin/rls`;
 
   if (!(existsSync(rlsPath))) {
@@ -91,6 +91,31 @@ async function getRlsPath() {
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Initializing learn extension...");
+
+  let rlsPath: string = getRlsPath();
+  if (rlsPath) {
+    let lspClient = await spawnRustLSP(vscode.workspace, rlsPath);
+    lspClient.start();
+    await lspClient.onReady();
+    console.log("Rust lsp server ready.");
+
+    vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+      async provideHover(document, position, token) {
+        const lspResponse = await lspClient.sendRequest(
+          HoverRequest.type,
+          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
+            document,
+            position.translate(0, -1)
+          ),
+          token
+        );
+
+        lspClient.protocol2CodeConverter.asHover(lspResponse);
+
+        return null;
+      }
+    });
+  }
 
   // block on parser initialization from WASM
   await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
@@ -141,31 +166,6 @@ export async function activate(context: vscode.ExtensionContext) {
       return null;
     }
   });
-
-  let rlsPath: string = await getRlsPath();
-  if (rlsPath) {
-    let lspClient = await spawnRustLSP(vscode.workspace, rlsPath);
-    lspClient.start();
-    await lspClient.onReady();
-    console.log("Rust lsp server ready.");
-
-    vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-      async provideHover(document, position, token) {
-        const lspResponse = await lspClient.sendRequest(
-          HoverRequest.type,
-          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
-            document,
-            position.translate(0, -1)
-          ),
-          token
-        );
-
-        lspClient.protocol2CodeConverter.asHover(lspResponse);
-
-        return null;
-      }
-    });
-  }
 
   // Build a tree (not a graph!) of concepts for learnin' within a single file
   vscode.window.registerTreeDataProvider(
