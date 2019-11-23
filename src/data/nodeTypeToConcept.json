@@ -125,5 +125,27 @@
       "sourceUrl":
         "https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator"
     }
+  },
+  {
+    "title": "Scoped imports (e.g. `use some_module::some_enum::some_value`)",
+    "nodeType": "scoped_use_list",
+    "nodeQuery": "(scoped_use_list)",
+    "explanation": {
+      "text":
+        "The `::` in a `use` statement separates components of a path that describe how to import an identifier from other modules and types. They may be absolute or relative (see below).",
+      "sourceUrl":
+        "https://doc.rust-lang.org/book/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html#paths-for-referring-to-an-item-in-the-module-tree"
+    }
+  },
+  {
+    "title": "`self` as a parameter",
+    "nodeType": "self_parameter",
+    "nodeQuery": "(self_parameter)",
+    "explanation": {
+      "text":
+        "In an implementation scope for a `struct` or `enum` (`impl`), the `self` parameter is used to access methods or condition on subtypes. This is commonly used to implement functionality that relies on other `struct` members, or (in combination with `match`) to do different things based on `enum` fields and values.",
+      "sourceUrl":
+        "https://doc.rust-lang.org/1.18.0/book/second-edition/ch05-01-method-syntax.html#defining-methods"
+    }
   }
 ]
