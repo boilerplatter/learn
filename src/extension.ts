@@ -67,14 +67,12 @@ export async function activate(context: vscode.ExtensionContext) {
         const { nodeType } = parent.walk();
         const {
           title = "",
-          explanation: { text = "", sourceUrl = "" } = {}
+          explanation: { text = "", sourceUrls = [] } = {}
         } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
-
-        const header = title && `### ${title}\n`;
-        const source =
-          sourceUrl && `\n\nFurther reading: [${sourceUrl}](${sourceUrl})`;
-        const entry = `${header}${text}${source}`;
-        const md = new vscode.MarkdownString(entry)
+        const header = title && `## 💡 ${title}\n`;
+        const sources = `\n\nMore info: ${sourceUrls.join('\n')}`;
+        const entry = `${header}${text}${sources}`;
+        const md = new vscode.MarkdownString(entry);
         md.isTrusted = true;
         return new vscode.Hover(entry);
       }
