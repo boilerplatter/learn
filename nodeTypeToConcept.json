@@ -30,7 +30,7 @@
   }
 },
 {
-
+  "title": "Trait implementation (`impl` ... `for`)",
   "nodeType": "impl_item",
   "nodeQuery": "(impl_item trait: (type_identifier))",
   "tokenSpan": [0, 4],
