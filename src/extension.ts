@@ -64,11 +64,18 @@ export async function activate(context: vscode.ExtensionContext) {
           });
 
           if (parent) {
-            let { nodeType } = parent.walk();
+            const { nodeType } = parent.walk();
+            const {
+              title = "",
+              explanation: { text = "", sourceUrl = "" } = {}
+            } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
 
-            let blurb = getOr("")(`${nodeType}.explanation.text`)(PROVIDED_HOVERS as any);
+            const header = title && `### ${title}\n`;
+            const source =
+              sourceUrl && `\n\nFurther reading: [${sourceUrl}](${sourceUrl})`;
+            const entry = `${header}${text}${source}`;
 
-            return new vscode.Hover(blurb);
+            return new vscode.Hover(entry);
           }
 
           return null;
