@@ -88,7 +88,7 @@
     "tokenSpan": [-1, 1],
     "explanation": {
       "text":
-        "Macros are specially written code that expands to produce more code; the `!` here indicates a macro is being called. `println!` and `vec!` are two very common macros in Rust.",
+        "Macros are specially written code that expands to produce more code; the `!` here indicates a macro is being called. `println!` and `vec!` are two common macros in Rust.",
       "sourceUrl":
         "https://doc.rust-lang.org/book/ch19-06-macros.html#function-like-macros"
     }
