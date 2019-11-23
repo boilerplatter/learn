@@ -8,6 +8,7 @@ import { getOr, keyBy } from "lodash/fp";
 import * as nodeTypeHovers from "./data/nodeTypeToConcept.json";
 
 import {
+  HoverRequest,
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
@@ -22,6 +23,15 @@ const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Initializing learn extension...");
+
+  let lspClient = await spawnRustLSP(vscode.workspace);
+  lspClient.start();
+
+  /*console.log("Start is: ", start);*/
+  console.log("lsp client is: ", lspClient);
+  await lspClient.onReady();
+  console.log("RUST LSP READY!");
+
 
   // block on parser initialization from WASM
   await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
@@ -48,7 +58,34 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // register the hover action for Rust files
   vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-    provideHover(document, { line: row, character: column }, token) {
+    provideHover(document, position, token) {
+      let { line: row, character: column } = position;
+
+      let nothing = new Promise(function(resolve, reject) {
+        lspClient
+        .sendRequest(
+          HoverRequest.type,
+          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
+            document,
+            position.translate(0, -1)
+          ),
+          token
+        )
+        .then(
+          (data: any) => {
+            return resolve(
+              lspClient.protocol2CodeConverter.asHover(data)
+            );
+          },
+          (error: any) => {
+            return reject(error);
+          }
+        );
+      });
+
+
+
+
       const tree = getTree(document);
 
       // TODO: check and refine this "parent" assumption
@@ -81,15 +118,13 @@ export async function activate(context: vscode.ExtensionContext) {
     "A hover provider was registered for Rust files"
   );
 
-  spawnRustLSP();
 }
 
-async function spawnRustLSP() {
+async function spawnRustLSP(workspace: any) {
   const rlsPath = "rls";
 
-  // TODO: actually get the current workspace folder
-  // const cwd = workspace.getWorkspaceFolder
-  const cwd = "/home/nik/Code";
+  // TODO: validate that first array item exists
+  const cwd = workspace.workspaceFolders[0].uri.fsPath;
   let env = {};
 
   const serverOptions: ServerOptions = async () => {
@@ -140,6 +175,7 @@ async function spawnRustLSP() {
   );
 
   console.log("Client is: ", client);
+  return client;
 }
 
 // this method is called when your extension is deactivated
