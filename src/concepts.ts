@@ -116,11 +116,13 @@ export class ConceptProvider implements vscode.TreeDataProvider<Concept> {
         filter(Boolean),
         map(
           ({
+            level,
             title,
             example,
             explanation: { text, sourceUrls } = {} as Record<string, any>
           }) => {
-            const label = flow(replace(/`/g)(""), capitalize)(title);
+            const button = level ? '🟢' : '🟡'
+            const label = `${button} ${flow(replace(/`/g)(""), capitalize)(title)}`;
             const { value: rawBlurb } = buildBlurb(title, text, sourceUrls);
             const rawBlurbWithExample = example ? `${rawBlurb}\n\n **Example:** ${example}\n` : rawBlurb;
             const blurb = markdown.render(rawBlurbWithExample);
