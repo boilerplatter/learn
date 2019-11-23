@@ -5,6 +5,7 @@
     "nodeType": "use_declaration",
     "nodeQuery": "(use_declaration)",
     "tokenSpan": [0, 3],
+    "level": 1,
     "explanation": {
       "text":
         "By default, Rust brings only a few types into the scope of every program in the prelude. If a type you want to use isn’t in the prelude, you have to bring that type into scope explicitly with a use statement.",
@@ -19,6 +20,7 @@
     "nodeType": "use_list",
     "nodeQuery": "(use_list)",
     "tokenSpan": [-2, 1],
+    "level": 1,
     "explanation": {
       "text":
         "If we’re using multiple items defined in the same package or same module, listing each item on its own line can take up a lot of vertical space in our files. Instead, we can use nested paths to bring the same items into scope in one line. We do this by specifying the common part of the path, followed by two colons, and then curly brackets around a list of the parts of the paths that differ.",
@@ -33,6 +35,7 @@
     "nodeType": "enum_item",
     "nodeQuery": "(enum_item)",
     "tokenSpan": [0, 4],
+    "level": 1,
     "explanation": {
       "text":
         "Enums allow you to define a type by enumerating its possible values. An enum encodes meaning along with data, and pattern matching an enum in the `match` expression also makes it easy to run different code for different enum values.",
@@ -181,6 +184,7 @@
     "example": "`fn fmt(&self, formatter: &mut Formatter) -> fmt::Result { ... }`",
     "nodeType": "self_parameter",
     "nodeQuery": "(self_parameter)",
+    "level": 1,
     "explanation": {
       "text":
         "In an implementation scope for a `struct` or `enum` (`impl`), the `self` parameter is used to access methods or condition on subtypes. This is commonly used to implement functionality that relies on other `struct` members, or (in combination with `match`) to do different things based on `enum` fields and values.",
