@@ -53,6 +53,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.showInformationMessage("A file parse happened!");
   });
 
+  spawnRustLSP();
   context.subscriptions.push(parseFile);
 }
 
@@ -108,6 +109,8 @@ async function spawnRustLSP() {
     serverOptions,
     clientOptions
   );
+
+  console.log("Client is: ", client);
 }
 
 // this method is called when your extension is deactivated
