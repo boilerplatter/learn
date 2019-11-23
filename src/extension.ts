@@ -22,23 +22,19 @@ const PROVIDED_LESSONS: Record<string, string> = {
   unit_type: "This type is an absolute UNIT"
 };
 
-// TODO: this is gross, find a way to not do it out here and don't do this
-// variable hotswapping doxicness
-let platterRustLsp: LanguageClient;
-let client = spawnRustLSP().then(client => {
-  let start = client.start();
-  platterRustLsp = client;
-  console.log("Start is: ", start);
-  console.log("lsp client is: ", client);
-  client.onReady().then(() => {
-    console.log("RUST LSP READY!");
-  });
-  return client;
-});
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
+
+  let lspClient = await spawnRustLSP(vscode.workspace);
+  lspClient.start();
+
+  /*console.log("Start is: ", start);*/
+  console.log("lsp client is: ", lspClient);
+  await lspClient.onReady();
+  console.log("RUST LSP READY!");
+
   console.log("Initializing learn extension...");
 
   // block on parser initialization from WASM
@@ -75,10 +71,10 @@ export async function activate(context: vscode.ExtensionContext) {
         provideHover(document, position, token) {
           let { line: row, character: column } = position;
           let nothing = new Promise(function(resolve, reject) {
-            platterRustLsp
+            lspClient
               .sendRequest(
                 HoverRequest.type,
-                platterRustLsp.code2ProtocolConverter.asTextDocumentPositionParams(
+                lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
                   document,
                   position.translate(0, -1)
                 ),
@@ -87,7 +83,7 @@ export async function activate(context: vscode.ExtensionContext) {
               .then(
                 data => {
                   return resolve(
-                    platterRustLsp.protocol2CodeConverter.asHover(data)
+                    lspClient.protocol2CodeConverter.asHover(data)
                   );
                 },
                 error => {
@@ -125,12 +121,11 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(parseFile);
 }
 
-async function spawnRustLSP() {
+async function spawnRustLSP(workspace: any) {
   const rlsPath = "rls";
 
-  // TODO: actually get the current workspace folder
-  // const cwd = workspace.getWorkspaceFolder
-  const cwd = "/home/nik/Code";
+  // TODO: validate that first array item exists
+  const cwd = workspace.workspaceFolders[0].uri.fsPath;
   let env = {};
 
   const serverOptions: ServerOptions = async () => {
