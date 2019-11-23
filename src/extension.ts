@@ -6,6 +6,7 @@ import * as path from "path";
 import * as child_process from "child_process";
 import { getOr, keyBy } from "lodash/fp";
 import * as nodeTypeHovers from "./data/nodeTypeToConcept.json";
+import { ConceptProvider } from "./concepts";
 
 import {
   HoverRequest,
@@ -19,14 +20,15 @@ const RUST_WASM_MODULE = "tree-sitter-rust";
 const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
 const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 
-class ConceptProvider implements vscode.TreeDataProvider<number> {
-  getTreeItem(offset: number): vscode.TreeItem {
-    return new vscode.TreeItem("this is a concept")
-  }
+function buildBlurb(title = "", text = "", sourceUrls = []) {
+  const header = title && `## 💡 ${title}\n`;
+  const sources = `\n\nMore info: ${sourceUrls.join('\n')}`;
+  const entry = `${header}${text}${sources}`;
+  const markdown = new vscode.MarkdownString(entry);
 
-  getChildren(offset: number) {
-    return [];
-  }
+  markdown.isTrusted = true;
+
+  return markdown;
 }
 
 // this method is called when your extension is activated
@@ -76,46 +78,43 @@ export async function activate(context: vscode.ExtensionContext) {
       if (parent) {
         const { nodeType } = parent.walk();
         const {
-          title = "",
-          explanation: { text = "", sourceUrls = [] } = {}
-        } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
-        const header = title && `## 💡 ${title}\n`;
-        const sources = `\n\nMore info: ${sourceUrls.join('\n')}`;
-        const entry = `${header}${text}${sources}`;
-        const md = new vscode.MarkdownString(entry);
-        md.isTrusted = true;
-        return new vscode.Hover(entry);
-      }
+          title,
+          explanation: { text, sourceUrls } = {} as Record<string, string | string[]>
+      } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
 
-      return null;
+      const entry = buildBlurb(title, text, sourceUrls);
+
+      return new vscode.Hover(entry);
     }
-  });
 
-  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-    async provideHover(document, position, token) {
-      const lspResponse = await lspClient
-        .sendRequest(
-          HoverRequest.type,
-          lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
-            document,
-            position.translate(0, -1)
-          ),
-          token
-        );
+    return null;
+  }
+});
 
-        lspClient.protocol2CodeConverter.asHover(lspResponse);
+vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+  async provideHover(document, position, token) {
+    const lspResponse = await lspClient.sendRequest(
+      HoverRequest.type,
+      lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
+        document,
+        position.translate(0, -1)
+      ),
+      token
+    );
 
-        return null;
-    }
-  });
+    lspClient.protocol2CodeConverter.asHover(lspResponse);
 
-  vscode.window.createTreeView('concepts', { treeDataProvider: new ConceptProvider() })
-  // vscode.window.registerTreeDataProvider('concepts', new ConceptProvider());
+    return null;
+  }
+});
 
-  // Display a message box to the user
-  vscode.window.showInformationMessage(
-    "A hover provider was registered for Rust files"
-  );
+// Build a tree (not a graph!) of concepts for learnin' within a single file
+vscode.window.registerTreeDataProvider("concepts", new ConceptProvider(parser, PROVIDED_HOVERS));
+
+// Display a message box to the user
+vscode.window.showInformationMessage(
+  "A hover provider was registered for Rust files"
+);
 }
 
 async function spawnRustLSP(workspace: any) {
