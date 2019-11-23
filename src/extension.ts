@@ -59,14 +59,17 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
         provideHover(document, { line: row, character: column }, token) {
           const tree = getTree(document);
-          
-          // TODO: check and refine this "parent" assumption
-          const { parent } = tree.rootNode.descendantForPosition({ row, column });
 
-          if(parent) {
+          // TODO: check and refine this "parent" assumption
+          const { parent } = tree.rootNode.descendantForPosition({
+            row,
+            column
+          });
+
+          if (parent) {
             let { nodeType } = parent.walk();
 
-            return new vscode.Hover(PROVIDED_LESSONS[nodeType] || "")
+            return new vscode.Hover(PROVIDED_LESSONS[nodeType] || "");
           }
 
           return null;
