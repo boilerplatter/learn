@@ -7,8 +7,9 @@
     "explanation": {
       "text":
         "By default, Rust brings only a few types into the scope of every program in the prelude. If a type you want to use isn’t in the prelude, you have to bring that type into scope explicitly with a use statement.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch02-00-guessing-game-tutorial.html#processing-a-guess"
+      ]
     }
   },
   {
@@ -19,8 +20,9 @@
     "explanation": {
       "text":
         "If we’re using multiple items defined in the same package or same module, listing each item on its own line can take up a lot of vertical space in our files. Instead, we can use nested paths to bring the same items into scope in one line. We do this by specifying the common part of the path, followed by two colons, and then curly brackets around a list of the parts of the paths that differ.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch07-04-bringing-paths-into-scope-with-the-use-keyword.html#using-nested-paths-to-clean-up-large-use-lists"
+      ]
     }
   },
   {
@@ -31,7 +33,9 @@
     "explanation": {
       "text":
         "Enums allow you to define a type by enumerating its possible values. An enum encodes meaning along with data, and pattern matching an enum in the `match` expression also makes it easy to run different code for different enum values.",
-      "sourceUrl": "https://doc.rust-lang.org/book/ch06-00-enums.html"
+      "sourceUrls": [
+        "https://doc.rust-lang.org/book/ch06-00-enums.html"
+      ]
     }
   },
   {
@@ -41,9 +45,10 @@
     "tokenSpan": [0, 4],
     "explanation": {
       "text":
-        "A trait tells the Rust compiler about functionality a particular type has and can share with other types. Implementing a trait on a type is similar to implementing regular methods. The difference is that after impl, we put the trait name that we want to implement, then use the for keyword, and then specify the name of the type we want to implement the trait for. Within the impl block, we put the method signatures that the trait definition has defined.",
-      "sourceUrl":
+        "A trait tells the Rust compiler about functionality a particular type has and can share with other types. Implementing a trait on a type is similar to implementing regular methods. The difference is that after `impl`, we put the trait name that we want to implement, then use the `for` keyword, and then specify the name of the type we want to implement the trait for. Within the `impl` block, we put the method signatures that the trait definition has defined.",
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch10-02-traits.html#implementing-a-trait-on-a-type"
+      ]
     }
   },
   {
@@ -54,8 +59,9 @@
     "explanation": {
       "text":
         "A reference type indicates a parameter or other scoped identifier that is borrowed: you can't change the borrowed item (unless it is also declared mutable with `mut`). The function will also not deallocate the resource when it goes out of scope. This allows for safe data sharing between functions/scopes without copying.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/1.30.0/book/first-edition/references-and-borrowing.html#borrowing"
+      ]
     }
   },
   {
@@ -66,8 +72,9 @@
     "explanation": {
       "text":
         "A mutable reference allows read/write access to the referred item. You'll often need to use asterisks to access the contents of a mutable reference, e.g. `let y = &mut x; *y += 1;`.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/1.30.0/book/first-edition/references-and-borrowing.html#borrowing"
+      ]
     }
   },
   {
@@ -78,7 +85,9 @@
     "explanation": {
       "text":
         "Rust has an extremely powerful control flow operator called `match` that allows you to compare a value against a series of patterns and then execute code based on which pattern matches. The power of match comes from the expressiveness of the patterns and the fact that the compiler confirms that all possible cases are handled.",
-      "sourceUrl": "https://doc.rust-lang.org/book/ch06-02-match.html"
+      "sourceUrls": [
+        "https://doc.rust-lang.org/book/ch06-02-match.html"
+      ]
     }
   },
   {
@@ -89,8 +98,9 @@
     "explanation": {
       "text":
         "Macros are specially written code that expands to produce more code; the `!` here indicates a macro is being called. `println!` and `vec!` are two common macros in Rust.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch19-06-macros.html#function-like-macros"
+      ]
     }
   },
   {
@@ -100,8 +110,9 @@
     "explanation": {
       "text":
         "To show Rust where to find an identifier, we use a path in the same way we use a path when navigating a filesystem. If we want to call a function or use a type, we need to know its path. Paths are composed of one or more nested modules and types separated by double colons (::), followed by an item's identifier.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html#paths-for-referring-to-an-item-in-the-module-tree"
+      ]
     }
   },
   {
@@ -111,8 +122,9 @@
     "explanation": {
       "text":
         "Generics are abstract stand-ins for concrete types or other properties. Some common examples are `Option<T>`, `Vec<T>`, and `struct Point<T> { x: T, y: T, }`. They allow you to write code that defines behavior and relationships that work for multiple concrete types, without repeating yourself.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch10-01-syntax.html#generic-data-types"
+      ]
     }
   },
   {
@@ -122,8 +134,9 @@
     "explanation": {
       "text":
         "The `?` placed after a `Result` makes a common error handling pattern more concise: if the value of the `Result` is an `Ok`, the value inside the `Ok` will get returned from this expression, and the program will continue. If the value is an `Err`, the `Err` will be returned from the whole function as if we had used the return keyword",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator"
+      ]
     }
   },
   {
@@ -133,8 +146,9 @@
     "explanation": {
       "text":
         "The `::` in a `use` statement separates components of a path that describe how to import an identifier from other modules and types. They may be absolute or relative (see below).",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/book/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html#paths-for-referring-to-an-item-in-the-module-tree"
+      ]
     }
   },
   {
@@ -144,8 +158,9 @@
     "explanation": {
       "text":
         "In an implementation scope for a `struct` or `enum` (`impl`), the `self` parameter is used to access methods or condition on subtypes. This is commonly used to implement functionality that relies on other `struct` members, or (in combination with `match`) to do different things based on `enum` fields and values.",
-      "sourceUrl":
+      "sourceUrls": [
         "https://doc.rust-lang.org/1.18.0/book/second-edition/ch05-01-method-syntax.html#defining-methods"
+      ]
     }
   }
 ]
