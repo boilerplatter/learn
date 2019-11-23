@@ -23,7 +23,7 @@ const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
 const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 
 async function spawnRustLSP(workspace: any) {
-  let rlsPath = "~/.cargo/bin/rls";
+  let rlsPath = `${process.env.HOME}/.cargo/bin/rls`;
 
   if (!existsSync(rlsPath)) {
     rlsPath = "rls";
