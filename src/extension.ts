@@ -19,6 +19,16 @@ const RUST_WASM_MODULE = "tree-sitter-rust";
 const RUST_HOVER_SCHEME = { language: "rust", scheme: "file" };
 const PROVIDED_HOVERS = keyBy("nodeType")(nodeTypeHovers);
 
+class ConceptProvider implements vscode.TreeDataProvider<number> {
+  getTreeItem(offset: number): vscode.TreeItem {
+    return new vscode.TreeItem("this is a concept")
+  }
+
+  getChildren(offset: number) {
+    return [];
+  }
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -98,6 +108,9 @@ export async function activate(context: vscode.ExtensionContext) {
         return null;
     }
   });
+
+  vscode.window.createTreeView('concepts', { treeDataProvider: new ConceptProvider() })
+  // vscode.window.registerTreeDataProvider('concepts', new ConceptProvider());
 
   // Display a message box to the user
   vscode.window.showInformationMessage(
