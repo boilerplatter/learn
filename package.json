@@ -40,7 +40,9 @@
 		"vscode-test": "^1.2.2"
 	},
 	"dependencies": {
-		"web-tree-sitter": "^0.15.11",
-		"vscode-languageclient": "^5.2.1"
+		"@types/lodash": "^4.14.149",
+		"lodash": "^4.17.15",
+		"vscode-languageclient": "^5.2.1",
+		"web-tree-sitter": "^0.15.11"
 	}
 }
