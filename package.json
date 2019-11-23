@@ -6,8 +6,12 @@
   "engines": {
     "vscode": "^1.40.0"
   },
-  "categories": ["Other"],
-  "activationEvents": ["onLanguage:rust"],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:rust"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [],
@@ -49,7 +53,9 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.149",
+    "@types/markdown-it": "^0.0.9",
     "lodash": "^4.17.15",
+    "markdown-it": "^10.0.0",
     "vscode-languageclient": "^5.2.1",
     "web-tree-sitter": "^0.15.11"
   }
