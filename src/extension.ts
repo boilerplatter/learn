@@ -31,92 +31,6 @@ function buildBlurb(title = "", text = "", sourceUrls = []) {
   return markdown;
 }
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
-  console.log("Initializing learn extension...");
-
-  let lspClient = await spawnRustLSP(vscode.workspace);
-  lspClient.start();
-  await lspClient.onReady();
-  console.log("Rust lsp server ready.");
-
-  // block on parser initialization from WASM
-  await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
-
-  // load Rust language module
-  const absoluteRustPath = path.join(
-    context.extensionPath,
-    "parsers",
-    `${RUST_WASM_MODULE}.wasm`
-  );
-  const Rust = await Parser.Language.load(absoluteRustPath); // TODO: cache these parsers between files or init on workspace open
-  const parser = new Parser();
-
-  // set Rust as standard tree-sitter language module
-  parser.setLanguage(Rust);
-
-  // TODO: this should probably be constrained a bit
-  function getTree(document: any) {
-    // TODO: investigate getText vs Parser.input()
-
-    // parse tree of given document
-    return parser.parse(document.getText());
-  }
-
-  // register the hover action for Rust files
-  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-    provideHover(document, { line: row, character: column }, token) {
-      const tree = getTree(document);
-
-      // TODO: check and refine this "parent" assumption
-      const { parent } = tree.rootNode.descendantForPosition({
-        row,
-        column
-      });
-
-      if (parent) {
-        const { nodeType } = parent.walk();
-        const {
-          title,
-          explanation: { text, sourceUrls } = {} as Record<string, string | string[]>
-      } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
-
-      const entry = buildBlurb(title, text, sourceUrls);
-
-      return new vscode.Hover(entry);
-    }
-
-    return null;
-  }
-});
-
-vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-  async provideHover(document, position, token) {
-    const lspResponse = await lspClient.sendRequest(
-      HoverRequest.type,
-      lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
-        document,
-        position.translate(0, -1)
-      ),
-      token
-    );
-
-    lspClient.protocol2CodeConverter.asHover(lspResponse);
-
-    return null;
-  }
-});
-
-// Build a tree (not a graph!) of concepts for learnin' within a single file
-vscode.window.registerTreeDataProvider("concepts", new ConceptProvider(parser, PROVIDED_HOVERS));
-
-// Display a message box to the user
-vscode.window.showInformationMessage(
-  "A hover provider was registered for Rust files"
-);
-}
-
 async function spawnRustLSP(workspace: any) {
   const rlsPath = "~/.cargo/bin/rls";
 
@@ -173,6 +87,92 @@ async function spawnRustLSP(workspace: any) {
   );
 
   return client;
+}
+
+// this method is called when your extension is activated
+// your extension is activated the very first time the command is executed
+export async function activate(context: vscode.ExtensionContext) {
+  console.log("Initializing learn extension...");
+
+  let lspClient = await spawnRustLSP(vscode.workspace);
+  lspClient.start();
+  await lspClient.onReady();
+  console.log("Rust lsp server ready.");
+
+  // block on parser initialization from WASM
+  await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
+
+  // load Rust language module
+  const absoluteRustPath = path.join(
+    context.extensionPath,
+    "parsers",
+    `${RUST_WASM_MODULE}.wasm`
+  );
+  const Rust = await Parser.Language.load(absoluteRustPath); // TODO: cache these parsers between files or init on workspace open
+  const parser = new Parser();
+
+  // set Rust as standard tree-sitter language module
+  parser.setLanguage(Rust);
+
+  // TODO: this should probably be constrained a bit
+  function getTree(document: any) {
+    // TODO: investigate getText vs Parser.input()
+
+    // parse tree of given document
+    return parser.parse(document.getText());
+  }
+
+  // register the hover action for Rust files
+  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+      provideHover(document, { line: row, character: column }, token) {
+        const tree = getTree(document);
+
+        // TODO: check and refine this "parent" assumption
+        const { parent } = tree.rootNode.descendantForPosition({
+          row,
+          column
+        });
+
+        if (parent) {
+          const { nodeType } = parent.walk();
+          const {
+            title,
+            explanation: { text, sourceUrls } = {} as Record<string, string | string[]>
+        } = getOr({} as any)(nodeType)(PROVIDED_HOVERS as any);
+
+        const entry = buildBlurb(title, text, sourceUrls);
+
+        return new vscode.Hover(entry);
+      }
+
+      return null;
+    }
+  });
+
+  vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
+    async provideHover(document, position, token) {
+      const lspResponse = await lspClient.sendRequest(
+        HoverRequest.type,
+        lspClient.code2ProtocolConverter.asTextDocumentPositionParams(
+          document,
+          position.translate(0, -1)
+        ),
+        token
+      );
+
+      lspClient.protocol2CodeConverter.asHover(lspResponse);
+
+      return null;
+    }
+  });
+
+  // Build a tree (not a graph!) of concepts for learnin' within a single file
+  vscode.window.registerTreeDataProvider("concepts", new ConceptProvider(parser, PROVIDED_HOVERS));
+
+  // Display a message box to the user
+  vscode.window.showInformationMessage(
+    "A hover provider was registered for Rust files"
+  );
 }
 
 // this method is called when your extension is deactivated
