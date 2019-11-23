@@ -6,6 +6,7 @@ import * as path from "path";
 import * as child_process from "child_process";
 
 import {
+  HoverRequest,
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
@@ -26,6 +27,9 @@ const PROVIDED_LESSONS: Record<string, string> = {
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Initializing learn extension...");
 
+  let lsp = await spawnRustLSP();
+  await lsp.onReady();
+  console.log("Rust lsp ready...");
   // block on parser initialization from WASM
   await Parser.init(); // TODO: double-check that this doesn't crash, as the tree-sitter extension suggests
 
@@ -57,7 +61,33 @@ export async function activate(context: vscode.ExtensionContext) {
     () => {
       // register the hover action for Rust files
       vscode.languages.registerHoverProvider(RUST_HOVER_SCHEME, {
-        provideHover(document, { line: row, character: column }, token) {
+        provideHover(document, position, token) {
+          let { line: row, character: column } = position;
+
+          let b = new Promise(function(resolve, reject) {
+            lsp
+              .sendRequest(
+                HoverRequest.type,
+                lsp.code2ProtocolConverter.asTextDocumentPositionParams(
+                  document,
+                  position.translate(0, -1)
+                ),
+                token
+              )
+              .then(
+                function(data) {
+                  return resolve(lsp.protocol2CodeConverter.asHover(data));
+                },
+                function(error) {
+                  return reject(error);
+                }
+              );
+          });
+
+          b.then((hoverstuffs) => {
+            console.log("the hoverstuffs were: ", hoverstuffs);
+          });
+
           const tree = getTree(document);
 
           // TODO: check and refine this "parent" assumption
@@ -143,6 +173,7 @@ async function spawnRustLSP() {
   );
 
   console.log("Client is: ", client);
+  return client;
 }
 
 // this method is called when your extension is deactivated
