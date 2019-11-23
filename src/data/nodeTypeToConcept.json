@@ -97,10 +97,24 @@
     }
   },
   {
-    "title": "Macro invocation",
+    "title": "Macro parameters",
     "example": "`println!(\"Hello, {}\", name);`",
     "nodeType": "token_tree",
     "nodeQuery": "(macro_invocation (token_tree))",
+    "tokenSpan": [-1, 1],
+    "explanation": {
+      "text":
+        "Macros are specially written code that expands to produce more code; the `!` here indicates a macro is being called. Macros can take parameters in parentheses in the same way functions do. `println!` and `vec!` are two common macros in Rust.",
+      "sourceUrls": [
+        "https://doc.rust-lang.org/book/ch19-06-macros.html#function-like-macros"
+      ]
+    }
+  },
+  {
+    "title": "Macro invocation",
+    "example": "`println!(\"Hello, {}\", name);`",
+    "nodeType": "macro_invocation",
+    "nodeQuery": "(macro_invocation)",
     "tokenSpan": [-1, 1],
     "explanation": {
       "text":
