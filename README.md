@@ -1,6 +1,7 @@
 # Learn
 
 ![learn logo](./docs/learn_logo.png)
+![example gif](./docs/screencast-small3.gif)
 
 ## Who's it for?
 
