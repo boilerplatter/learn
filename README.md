@@ -15,13 +15,13 @@ Learn is a Visual Studio Code extension which takes advantage of a few newer tec
 
 #### Code intelligence based on deep syntax parsing
 
-We use a duo of newer code parsing technologies, language server protocol and tree-sitter, in order to have live references not only to the normal call-site -> definition and docstring navigation most tools come with, but to the actual underlying abstract syntax tree which represents Rust's semantics and best captures what's unique and valuable about this language.
+We use a duo of newer code parsing technologies, language server protocol and tree-sitter, in order to have live references not only to the normal call-site -> definition and docstring navigation most tools come with, but to the actual underlying concrete syntax tree which represents Rust's language constructs and how they compose directly.
 
-This allows us to do things like differentiate reserved keywords from each other (which most code editing tools fail in an epic way at), linking to the higher-level docs which get at the "why" of the language, not just the what. We can also parse, differentiate, and document symbols and operators, of which Rust has notoriously many, and which are often the hardest parts of a language to "just Google." Furthermore, by linking this information to the relatively few abstract syntax types and tokens in the language instead of to concrete lines or files of code, we have created documentation which can give you a conceptual overview of any line of code, whether written now or in your product's future.
+This allows us to do things like differentiate reserved keywords from each other (which most code editing tools fail in an epic way at), linking to the higher-level docs which get at the "why" of the language, not just the what. We can also parse, differentiate, and document symbols and operators, of which Rust has notoriously many, and which are often the hardest parts of a language to "just Google." Furthermore, by linking this information to the relatively few syntax types and tokens in the language instead of to individual lines or files of code, we have created documentation which can give you a conceptual overview of any line of code, whether written now or in your product's future.
 
 #### Concept sequencing for acquisition
 
-The higher level of curated conceptual linking that this rich code metadata gives us also enables to capture and order for teaching and acquisition the language concepts which particular codebases and files make use of. With this data, we can provide purpose-built learning tracks which will help you learn just what you need to to understand the code you are looking at, fast.
+The higher level of curated conceptual linking that this rich code metadata gives us also enables to capture and order for teaching and acquisition the language mechanisms and concepts which particular codebases and files make use of. With this data, we can provide purpose-built learning tracks which will help you learn just what you need to to understand the code you are looking at, fast.
 
 #### Future: team code curation
 
